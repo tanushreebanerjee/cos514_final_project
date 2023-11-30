@@ -1,0 +1,1 @@
+conda create -n myenv python=3.9 transformers pandas rouge
