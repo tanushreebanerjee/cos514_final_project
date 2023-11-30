@@ -1,6 +1,8 @@
 # Counterfactual Analysis for Spoken Dialog Summarization Tasks
 COS514 Final Project, Fall 2023, Princeton University
+
 Tanushree Banerjee, Kiyosu Maeda
+
 Instructor: Prof. Sanjeev Arora
 
 ## Overview
@@ -23,21 +25,24 @@ Long-form spoken dialogs, such as podcasts, interviews, and meetings, often requ
 
 We conduct a technical experiment using the ICSI or AMI corpus, injecting errors into transcripts and summarizing them with various LLMs. The impact of errors is then evaluated using ROUGE-N metrics.
 
-For detailed information, refer to the [Methodology](notebooks/methodology.ipynb) notebook.
-
 ## Project Structure
 ```css
 project-root/
 │
-├── data/
-├── notebooks/
-├── src/
-├── models/
-├── requirements.txt
-└── README.md
-```
+├── data/: Contains raw and processed data.
+    ├── raw/: Original data from ICSI or AMI corpus.
+    ├── processed/: Processed data for the project.
+├── src/: Python source code for different stages.
+    ├── data_preparation.py: Script for loading and preparing data.
+    ├── error_injection.py: Script for injecting errors into transcripts.
+    ├── summarization.py: Script for summarizing transcripts.
+    ├── evaluation.py: Script for evaluating the summarization.
+├── models/: Pre-trained language models. Each model has its own folder containing necessary files.
+├── requirements.txt: List of Python dependencies for easy installation.
+├── LICENSE: License information for your project.
+└── README.md: Project documentation.
 
-For a detailed explanation, see [Project Structure](#project-structure).
+```
 
 ## Getting Started
 
