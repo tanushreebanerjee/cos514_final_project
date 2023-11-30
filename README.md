@@ -9,22 +9,6 @@ Instructor: Prof. Sanjeev Arora
 
 This project aims to analyze the impact of speaker diarization and speech recognition errors on the quality of text summarization in spoken dialogs. By injecting artificial errors into transcripts and leveraging large language models (LLMs), we aim to understand how errors in upstream tasks affect downstream summarization tasks.
 
-## Table of Contents
-
-- [Background](#background)
-- [Methodology](#methodology)
-- [Project Structure](#project-structure)
-- [Getting Started](#getting-started)
-- [License](#license)
-
-## Background
-
-Long-form spoken dialogs, such as podcasts, interviews, and meetings, often require summarization for better understanding. This project investigates the interplay between speaker identification, ASR accuracy, and summarization quality.
-
-## Methodology
-
-We conduct a technical experiment using the ICSI and AMI corpus, injecting errors into transcripts and summarizing them with various LLMs. The impact of errors is then evaluated using ROUGE-N metrics.
-
 ## Project Structure
 ```css
 project-root/
@@ -42,8 +26,6 @@ project-root/
 ├── LICENSE: License information for your project.
 └── README.md: Project documentation.
 ```
-
-See [project_structure.txt](project_structure.txt) for a more detailed description of project structure.
 
 ## Getting Started
 
