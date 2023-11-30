@@ -23,7 +23,7 @@ Long-form spoken dialogs, such as podcasts, interviews, and meetings, often requ
 
 ## Methodology
 
-We conduct a technical experiment using the ICSI or AMI corpus, injecting errors into transcripts and summarizing them with various LLMs. The impact of errors is then evaluated using ROUGE-N metrics.
+We conduct a technical experiment using the ICSI and AMI corpus, injecting errors into transcripts and summarizing them with various LLMs. The impact of errors is then evaluated using ROUGE-N metrics.
 
 ## Project Structure
 ```css
@@ -41,8 +41,9 @@ project-root/
 ├── requirements.txt: List of Python dependencies for easy installation.
 ├── LICENSE: License information for your project.
 └── README.md: Project documentation.
-
 ```
+
+See [project_structure.txt](project_structure.txt) for a more detailed description of project structure.
 
 ## Getting Started
 
@@ -55,6 +56,15 @@ project-root/
    ```bash
    bash scripts/install.sh
 
+3. Activate the conda environment:
+    ```bash
+    conda activate cos514
+    ```
+
+4. Run the main script:
+    ```bash
+    python main.py
+    ```
 
 ## License
 This project is licensed under the MIT License.
