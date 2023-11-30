@@ -1,12 +1,9 @@
-# Implement functions to inject errors into transcripts
-def inject_speaker_errors(transcript, error_degree):
-    # Logic to inject speaker identification errors
-    # ...
+import random
 
-def inject_asr_errors(transcript, error_degree):
-    # Logic to inject speech recognition errors
-    # ...
+class ErrorInjection:
+    def __init__(self, error_types):
+        self.error_types = error_types
 
-# Apply error injection to transcripts
-transcripts_with_errors = [inject_speaker_errors(t, degree) for t in transcripts]
-transcripts_with_errors = [inject_asr_errors(t, degree) for t in transcripts_with_errors]
+    def inject_errors(self, transcript, error_degree):
+        # Logic to inject errors based on error types and degree
+        # ...
