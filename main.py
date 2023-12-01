@@ -4,6 +4,10 @@ from src.data_preparation import DataPreparation
 from src.error_injection import ErrorInjection
 from src.summarization import Summarization
 from src.evaluation import Evaluation
+from src.error_correction import ErrorCorrection
+
+# Set OpenAI API key as an environment variable
+os.environ["OPENAI_API_KEY"] = "YOUR_OPENAI_API_KEY"
 
 # Function to load experiment configurations from YAML files
 def load_experiment_config(config_path):
@@ -12,7 +16,7 @@ def load_experiment_config(config_path):
     return config
 
 # Function to run an experiment based on the provided configuration
-def run_experiment(config):
+def run_experiment(config, use_error_correction=False):
     # Data Preparation
     cache_dir = os.path.join('data', 'cache')  
     data_prep = DataPreparation(corpus_name=config['corpus_name'], cache_dir=cache_dir)
@@ -25,6 +29,9 @@ def run_experiment(config):
 
     # Summarization
     summarizer = Summarization(model_name=config['model_name'])
+    if use_error_correction:
+        error_correction = ErrorCorrection()
+        transcripts_with_errors = [error_correction.correct_errors(t) for t in transcripts_with_errors]
     summaries = [summarizer.summarize(t) for t in transcripts_with_errors]
 
     # Evaluation
@@ -37,7 +44,7 @@ def run_experiment(config):
         rouge_scores.append(evaluation.calculate_rouge(references[i], summaries[i]))
 
     # Store results (adjust the storage method based on your needs)
-    result_path = f'results/{config["experiment_name"]}_results.yaml'
+    result_path = f'results/{config["experiment_name"]}_{"with" if use_error_correction else "without"}_correction_results.yaml'
     with open(result_path, 'w') as result_file:
         yaml.dump({'ROUGE_scores': rouge_scores}, result_file)
 
@@ -49,4 +56,9 @@ config_files = [f for f in os.listdir('configs') if f.endswith('.yaml')]
 for config_file in config_files:
     config_path = os.path.join('configs', config_file)
     config = load_experiment_config(config_path)
-    run_experiment(config)
+
+    # Run without error correction
+    run_experiment(config, use_error_correction=False)
+
+    # Run with error correction
+    run_experiment(config, use_error_correction=True)
