@@ -54,8 +54,8 @@ def main():
         audio_path = os.path.join(audio_directory, audio_file)
         transcription = asr_pipeline.transcribe_audio(audio_path)
         
-        # Replace 'original_text' with the column name containing original transcripts in your DataFrame
-        original_text = "Replace_this_with_original_text_extraction_from_your_dataset"
+        # Get original text
+        original_text = "TODO"
         
         asr_results.append(ASRResult(id=audio_file, reference=original_text, hypothesis=" ".join(transcription)))
 
