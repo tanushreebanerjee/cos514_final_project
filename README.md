@@ -38,9 +38,9 @@ project-root/
     ```
 
 Alternatively, you may use the `install.sh` script to create the environment and install the dependencies:
-   ```bash
-   bash scripts/install.sh
-   ```
+    ```bash
+    bash scripts/install.sh
+    ```
 
 3. Activate the conda environment:
     ```bash
