@@ -1,9 +1,9 @@
 import os
 import yaml
-from data_preparation import DataPreparation
-from error_injection import ErrorInjection
-from summarization import Summarization
-from evaluation import Evaluation
+from src.data_preparation import DataPreparation
+from src.error_injection import ErrorInjection
+from src.summarization import Summarization
+from src.evaluation import Evaluation
 
 # Function to load experiment configurations from YAML files
 def load_experiment_config(config_path):
@@ -14,7 +14,10 @@ def load_experiment_config(config_path):
 # Function to run an experiment based on the provided configuration
 def run_experiment(config):
     # Data Preparation
-    data_prep = DataPreparation(corpus_path=config['corpus_path'])
+    cache_dir = os.path.join('data', 'cache')  
+    print(f'Loading transcripts from {config["corpus_name"]} corpus...')
+    print(f"Storing cache files in {cache_dir}")
+    data_prep = DataPreparation(corpus_name=config['corpus_name'], cache_dir=cache_dir)
     transcripts_df = data_prep.load_transcripts()
     baseline_transcripts_df = data_prep.create_baseline_transcripts(transcripts_df, sample_size=config['sample_size'])
 

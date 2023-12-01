@@ -9,14 +9,14 @@ degrees = [0.1, 0.2, 0.3]  # Adjust as needed
 
 # Define other parameters for experiments
 sample_sizes = [100, 200, 300]  # Adjust as needed
-corpora = {'ISCI': os.path.join('data', 'raw', 'iscicorpus'), 'AMI': os.path.join('data', 'raw', 'amicorpus')}
+corpus_names = ['ami', 'isci']  # Adjust as needed
 
 # Generate all combinations of parameters
-experiments = list(product(models, error_types, degrees, sample_sizes, corpora.items()))
+experiments = list(product(models, error_types, degrees, sample_sizes, corpus_names))
 
 # Function to generate a configuration file for each experiment
 def generate_config_file(experiment):
-    model, error_type, degree, sample_size, (corpus_name, corpus_path) = experiment
+    model, error_type, degree, sample_size, corpus_name = experiment
     config = {
         'experiment_name': f'{model}_{error_type}_error_{degree}_sample_{sample_size}_{corpus_name}',
         'model_name': model,
@@ -24,7 +24,6 @@ def generate_config_file(experiment):
         'degree_of_error': degree,
         'sample_size': sample_size,
         'corpus_name': corpus_name,
-        'corpus_path': corpus_path,
         # Add other experiment-specific parameters as needed
     }
 

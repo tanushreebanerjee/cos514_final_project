@@ -1,14 +1,20 @@
 import pandas as pd
 from datasets import load_dataset
+import os
 
 class DataPreparation:
-    def __init__(self, corpus_name):
+    def __init__(self, corpus_name, cache_dir=None):
         self.corpus_name = corpus_name
+        self.cache_dir = cache_dir
 
     def load_transcripts(self):
         # Load transcripts from the chosen corpus
         if self.corpus_name == 'AMI':
-            dataset = load_dataset('ami', 'meeting_transcription')
+            # Choose a valid configuration, for example, 'headset-single'
+            config = 'headset-single'
+
+            # Specify the cache directory
+            dataset = load_dataset('ami', config, cache_dir=self.cache_dir)
             transcripts_df = pd.DataFrame({'transcript': dataset['train']['text']})
             transcripts_df['reference_summary'] = dataset['train']['summary']
         elif self.corpus_name == 'ISCI':
@@ -29,8 +35,9 @@ class DataPreparation:
 
         return transcripts_df
 
-# Example usage:
-corpus_name = 'AMI'  # Change to 'ISCI' if needed
-data_prep = DataPreparation(corpus_name)
-transcripts_df = data_prep.load_transcripts()
-baseline_transcripts_df = data_prep.create_baseline_transcripts(transcripts_df, sample_size=100)
+# # Example usage:
+# corpus_name = 'AMI'  # Change to 'ISCI' if needed
+# cache_dir = os.path.join('data', 'cache')  
+# data_prep = DataPreparation(corpus_name, cache_dir=cache_dir)
+# transcripts_df = data_prep.load_transcripts()
+# baseline_transcripts_df = data_prep.create_baseline_transcripts(transcripts_df, sample_size=100)
