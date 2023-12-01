@@ -17,7 +17,6 @@ from src.evaluation import EvaluationPipeline
 # Define ASRResult namedtuple
 ASRResult = namedtuple('ASRResult', ['id', 'reference', 'hypothesis'])
 
-
 def run_pipeline(config):
     # Load configuration from JSON file
     with open(config, 'r') as f:
