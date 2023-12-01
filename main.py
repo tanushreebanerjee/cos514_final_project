@@ -8,6 +8,7 @@ from src.error_correction import ErrorCorrection
 
 # Set OpenAI API key as an environment variable
 os.environ["OPENAI_API_KEY"] = "YOUR_OPENAI_API_KEY"
+os.environ["HF_DATASETS_CACHE"] = os.path.join('data', 'cache')
 
 # Function to load experiment configurations from YAML files
 def load_experiment_config(config_path):
