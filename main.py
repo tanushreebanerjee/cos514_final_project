@@ -17,7 +17,7 @@ def load_experiment_config(config_path):
     return config
 
 # Function to run an experiment based on the provided configuration
-def run_experiment(config, use_error_correction=False):
+def run_experiment(config):
     # Data Preparation
     cache_dir = os.path.join('data', 'cache')  
     data_prep = DataPreparation(corpus_name=config['corpus_name'], cache_dir=cache_dir)
@@ -30,9 +30,6 @@ def run_experiment(config, use_error_correction=False):
 
     # Summarization
     summarizer = Summarization(model_name=config['model_name'])
-    if use_error_correction:
-        error_correction = ErrorCorrection()
-        transcripts_with_errors = [error_correction.correct_errors(t) for t in transcripts_with_errors]
     summaries = [summarizer.summarize(t) for t in transcripts_with_errors]
 
     # Evaluation
@@ -45,9 +42,25 @@ def run_experiment(config, use_error_correction=False):
         rouge_scores.append(evaluation.calculate_rouge(references[i], summaries[i]))
 
     # Store results (adjust the storage method based on your needs)
-    result_path = f'results/{config["experiment_name"]}_{"with" if use_error_correction else "without"}_correction_results.yaml'
+    result_path = f'results/{config["experiment_name"]}_without_correction_results.yaml'
     with open(result_path, 'w') as result_file:
         yaml.dump({'ROUGE_scores': rouge_scores}, result_file)
+
+    if config['error_correction_model']:
+        # Run with error correction
+        error_correction = ErrorCorrection(model=config['error_correction_model'])
+        transcripts_with_errors = [error_correction.correct_errors(t) for t in transcripts_with_errors]
+        summaries_with_correction = [summarizer.summarize(t) for t in transcripts_with_errors]
+
+        # Calculate and store ROUGE scores with error correction
+        rouge_scores_correction = []
+        for i in range(len(transcripts_with_errors)):
+            rouge_scores_correction.append(evaluation.calculate_rouge(references[i], summaries_with_correction[i]))
+
+        # Store results with error correction
+        result_path_correction = f'results/{config["experiment_name"]}_with_correction_results.yaml'
+        with open(result_path_correction, 'w') as result_file_correction:
+            yaml.dump({'ROUGE_scores': rouge_scores_correction}, result_file_correction)
 
 # Create a directory for result files
 os.makedirs('results', exist_ok=True)
@@ -59,7 +72,8 @@ for config_file in config_files:
     config = load_experiment_config(config_path)
 
     # Run without error correction
-    run_experiment(config, use_error_correction=False)
+    run_experiment(config)
 
-    # Run with error correction
-    run_experiment(config, use_error_correction=True)
+    # Run with error correction if the model is specified
+    if config['error_correction_model']:
+        run_experiment(config)

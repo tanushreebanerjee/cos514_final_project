@@ -5,3 +5,4 @@ pip install rouge
 pip install datasets
 pip install openai
 pip install backoff
+pip install soundfile

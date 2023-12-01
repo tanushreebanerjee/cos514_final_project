@@ -10,20 +10,21 @@ degrees = [0.1, 0.2, 0.3]  # Adjust as needed
 # Define other parameters for experiments
 sample_sizes = [100, 200, 300]  # Adjust as needed
 corpus_names = ['ami', 'icsi']  # Adjust as needed
-
+error_correction_models = ["gpt-3.5-turbo", "gpt-4", None]
 # Generate all combinations of parameters
-experiments = list(product(models, error_types, degrees, sample_sizes, corpus_names))
+experiments = list(product(models, error_types, degrees, sample_sizes, corpus_names, error_correction_models))
 
 # Function to generate a configuration file for each experiment
 def generate_config_file(experiment):
-    model, error_type, degree, sample_size, corpus_name = experiment
+    model, error_type, degree, sample_size, corpus_name, error_correction_model = experiment
     config = {
-        'experiment_name': f'{model}_{error_type}_error_{degree}_sample_{sample_size}_{corpus_name}',
+        'experiment_name': f'{model}_{error_type}_error_{degree}_sample_{sample_size}_{corpus_name}_correction_{error_correction_model}',
         'model_name': model,
         'error_types': [error_type],
         'degree_of_error': degree,
         'sample_size': sample_size,
         'corpus_name': corpus_name,
+        'error_correction_model': error_correction_model if error_correction_model else 'None'
         # Add other experiment-specific parameters as needed
     }
 
