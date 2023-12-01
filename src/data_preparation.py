@@ -9,17 +9,21 @@ class DataPreparation:
 
     def load_transcripts(self):
         # Load transcripts from the chosen corpus
-        if self.corpus_name == 'AMI':
+        if self.corpus_name == 'ami':
             # Choose a valid configuration, for example, 'headset-single'
             config = 'headset-single'
 
             # Specify the cache directory
-            dataset = load_dataset('ami', config, cache_dir=self.cache_dir)
+            dataset = load_dataset(self.corpus_name, config, cache_dir=self.cache_dir)
             transcripts_df = pd.DataFrame({'transcript': dataset['train']['text']})
             transcripts_df['reference_summary'] = dataset['train']['summary']
-        elif self.corpus_name == 'ISCI':
-            # Add logic to load ISCI corpus if needed
-            pass
+        elif self.corpus_name == 'icsi':
+            # Choose a valid configuration, for example, 'single'
+            config = 'single'
+
+            # Specify the cache directory
+            dataset = load_dataset("json", data_files=os.path.join(os.path.join("data", "raw", "icsi-corpus", "abstractive"), "Bdb001.json"))
+            
         else:
             raise ValueError(f"Unsupported corpus: {self.corpus_name}")
 

@@ -9,7 +9,7 @@ degrees = [0.1, 0.2, 0.3]  # Adjust as needed
 
 # Define other parameters for experiments
 sample_sizes = [100, 200, 300]  # Adjust as needed
-corpus_names = ['ami', 'isci']  # Adjust as needed
+corpus_names = ['ami', 'icsi']  # Adjust as needed
 
 # Generate all combinations of parameters
 experiments = list(product(models, error_types, degrees, sample_sizes, corpus_names))

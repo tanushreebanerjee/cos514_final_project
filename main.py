@@ -15,8 +15,6 @@ def load_experiment_config(config_path):
 def run_experiment(config):
     # Data Preparation
     cache_dir = os.path.join('data', 'cache')  
-    print(f'Loading transcripts from {config["corpus_name"]} corpus...')
-    print(f"Storing cache files in {cache_dir}")
     data_prep = DataPreparation(corpus_name=config['corpus_name'], cache_dir=cache_dir)
     transcripts_df = data_prep.load_transcripts()
     baseline_transcripts_df = data_prep.create_baseline_transcripts(transcripts_df, sample_size=config['sample_size'])
