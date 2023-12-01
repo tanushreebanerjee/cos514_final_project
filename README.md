@@ -43,8 +43,12 @@ Alternatively, you may use the `install.sh` script to create the environment and
 ```bash
     conda activate cos514
 ```
+4. Set OpenAI API key as the environment variable.
+```bash
+    export OPENAI_API_KEY=YOUR_API_KEY
+```
 
-4. Run the main script:
+5. Run the main script:
 ```bash
     python main.py
 ```

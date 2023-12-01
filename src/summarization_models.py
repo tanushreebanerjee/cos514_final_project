@@ -4,7 +4,7 @@ import backoff
 from transformers import pipeline
 
 class ChatGPTSummarizer:
-    def __init__(self, model_name="gpt-4", api_key=None):
+    def __init__(self, model_name="gpt-3.5-turbo", api_key=None):
         openai.api_key = api_key or os.environ.get("OPENAI_API_KEY")
         self.model_name = model_name
 
