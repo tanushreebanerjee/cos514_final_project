@@ -34,9 +34,15 @@ project-root/
     git clone REPO_URL
     ```
 
-2. Set up a conda environment and install dependencies:
+2. Set up a conda environment and install dependencies from the `requirements.txt` file:
+    ```bash
+    conda create --name cos514 --file requirements.txt
+    ```
+
+Alternatively, you may use the `install.sh` script to create the environment and install the dependencies:
    ```bash
    bash scripts/install.sh
+   ```
 
 3. Activate the conda environment:
     ```bash
