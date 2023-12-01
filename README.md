@@ -14,12 +14,12 @@ This project aims to analyze the impact of speaker diarization and speech recogn
 project-root/
 ├── data/: Contains raw and processed data.
     ├── raw/: Original data from ICSI or AMI corpus.
-    ├── processed/: Processed data for the project.
+    └── processed/: Processed data for the project.
 ├── src/: Python source code for different stages.
     ├── data_preparation.py: Script for loading and preparing data.
     ├── error_injection.py: Script for injecting errors into transcripts.
     ├── summarization.py: Script for summarizing transcripts.
-    ├── evaluation.py: Script for evaluating the summarization.
+    └── evaluation.py: Script for evaluating the summarization.
 ├── requirements.txt: List of Python dependencies for easy installation.
 ├── LICENSE: License information for your project.
 └── README.md: Project documentation.
@@ -28,29 +28,29 @@ project-root/
 ## Getting Started
 
 1. Clone this repository.
-    ```bash
+```bash
     git clone REPO_URL
-    ```
+```
 
-2. Set up a conda environment and install dependencies from the `requirements.txt` file:
-    ```bash
+3. Set up a conda environment and install dependencies from the `requirements.txt` file:
+```bash
     conda create --name cos514 --file requirements.txt
-    ```
+```
 
 Alternatively, you may use the `install.sh` script to create the environment and install the dependencies:
-    ```bash
+```bash
     bash scripts/install.sh
-    ```
+```
 
 3. Activate the conda environment:
-    ```bash
+```bash
     conda activate cos514
-    ```
+```
 
 4. Run the main script:
-    ```bash
+```bash
     python main.py
-    ```
+```
 
 ## License
 This project is licensed under the [MIT License](LICENSE)
