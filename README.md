@@ -53,4 +53,4 @@ Alternatively, you may use the `install.sh` script to create the environment and
 ```
 
 ## License
-This project is licensed under the [MIT License](LICENSE)
+This project is licensed under the [MIT License](LICENSE).
