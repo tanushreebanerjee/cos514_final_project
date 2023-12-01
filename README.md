@@ -12,7 +12,6 @@ This project aims to analyze the impact of speaker diarization and speech recogn
 ## Project Structure
 ```css
 project-root/
-│
 ├── data/: Contains raw and processed data.
     ├── raw/: Original data from ICSI or AMI corpus.
     ├── processed/: Processed data for the project.
@@ -21,7 +20,6 @@ project-root/
     ├── error_injection.py: Script for injecting errors into transcripts.
     ├── summarization.py: Script for summarizing transcripts.
     ├── evaluation.py: Script for evaluating the summarization.
-├── models/: Pre-trained language models. Each model has its own folder containing necessary files.
 ├── requirements.txt: List of Python dependencies for easy installation.
 ├── LICENSE: License information for your project.
 └── README.md: Project documentation.
