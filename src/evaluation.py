@@ -1,8 +1,8 @@
-import os
 import pandas as pd
 from rouge import Rouge
 from nltk.metrics import edit_distance
 from collections import namedtuple
+import matplotlib.pyplot as plt
 
 class Evaluation:
     def __init__(self, processed_corpus_df):
@@ -13,6 +13,12 @@ class Evaluation:
         rouge = Rouge()
         scores = rouge.get_scores(hyps=hypothesis, refs=reference, avg=True)
         return scores
+
+    def calculate_rouge_n(self, reference, hypothesis, n=1):
+        # Assuming reference and hypothesis are strings
+        rouge = Rouge()
+        scores = rouge.get_scores(hyps=hypothesis, refs=reference, avg=True)
+        return scores[f'rouge-{n}']['f']
 
     def calculate_wer(self, reference, hypothesis):
         # Assuming reference and hypothesis are strings
@@ -27,7 +33,9 @@ class Evaluation:
         hypothesis_summary = self.processed_corpus_df[hypothesis_column].tolist()
 
         # ROUGE calculation
-        rouge_scores = self.calculate_rouge(reference_summary, hypothesis_summary)
+        rouge_1 = self.calculate_rouge_n(reference_summary, hypothesis_summary, n=1)
+        rouge_2 = self.calculate_rouge_n(reference_summary, hypothesis_summary, n=2)
+        rouge_l = self.calculate_rouge_n(reference_summary, hypothesis_summary, n='l')
 
         # WER calculation
         wer_scores = [self.calculate_wer(reference, hypothesis) for reference, hypothesis in zip(reference_summary, hypothesis_summary)]
@@ -41,9 +49,9 @@ class Evaluation:
         # Save results to results_df
         self.results_df = self.results_df.append({
             'Model': model_name,
-            'ROUGE-1': rouge_scores['rouge-1']['f'],
-            'ROUGE-2': rouge_scores['rouge-2']['f'],
-            'ROUGE-L': rouge_scores['rouge-l']['f'],
+            'ROUGE-1': rouge_1,
+            'ROUGE-2': rouge_2,
+            'ROUGE-L': rouge_l,
             'WER': avg_wer,
             'DER': avg_der
         }, ignore_index=True)
@@ -51,6 +59,28 @@ class Evaluation:
     def save_evaluation_results_to_csv(self, output_file='data/evaluation_results.csv'):
         self.results_df.to_csv(output_file, index=False)
         print(f'Evaluation Results saved to {output_file}')
+        
+    def plot_wer_rouge(self, output_file='data/wer_rouge_plot.png'):
+        plt.scatter(self.results_df['WER'], self.results_df['ROUGE-1'], label='ROUGE-1')
+        plt.scatter(self.results_df['WER'], self.results_df['ROUGE-2'], label='ROUGE-2')
+        plt.scatter(self.results_df['WER'], self.results_df['ROUGE-L'], label='ROUGE-L')
+        plt.xlabel('Word Error Rate (WER)')
+        plt.ylabel('ROUGE Score')
+        plt.legend()
+        plt.title('WER x ROUGE-N')
+        plt.savefig(output_file)
+        plt.show()
+
+    def plot_der_rouge(self, output_file='data/der_rouge_plot.png'):
+        plt.scatter(self.results_df['DER'], self.results_df['ROUGE-1'], label='ROUGE-1')
+        plt.scatter(self.results_df['DER'], self.results_df['ROUGE-2'], label='ROUGE-2')
+        plt.scatter(self.results_df['DER'], self.results_df['ROUGE-L'], label='ROUGE-L')
+        plt.xlabel('Diarization Error Rate (DER)')
+        plt.ylabel('ROUGE Score')
+        plt.legend()
+        plt.title('DER x ROUGE-N')
+        plt.savefig(output_file)
+        plt.show()
 
 # Define a named tuple for annotation segments
 Segment = namedtuple('Segment', ['start', 'end', 'speaker'])
@@ -87,6 +117,12 @@ def main():
 
     # Save evaluation results to CSV
     evaluation.save_evaluation_results_to_csv()
+    
+    # Plot WER x ROUGE-N
+    evaluation.plot_wer_rouge()
+
+    # Plot DER x ROUGE-N
+    evaluation.plot_der_rouge()
 
 if __name__ == "__main__":
     main()
