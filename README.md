@@ -1,11 +1,8 @@
-# Counterfactual Analysis for Spoken Dialog Summarization Tasks
+# Counterfactual Analysis for Spoken Dialog Summarization
+
 COS514 Final Project, Fall 2023, Princeton University
-
 Authors: Tanushree Banerjee, Kiyosu Maeda
-
 Instructor: Prof. Sanjeev Arora
-
-## Overview
 
 This project aims to analyze the impact of speaker diarization and speech recognition errors on the quality of text summarization in spoken dialogs. By injecting artificial errors into transcripts and leveraging large language models (LLMs), we aim to understand how errors in upstream tasks affect downstream summarization tasks.
 
