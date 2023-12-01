@@ -4,6 +4,10 @@ from collections import namedtuple
 from nltk.metrics import edit_distance
 from transformers import pipeline
 from rouge import Rouge
+from src.summarization_models import XwinSummarizer, VicunaSummarizer, MPTSummarizer, Llama2Summarizer
+from src.preprocessing import load_corpus_csv
+from src.evaluation import EvaluationPipeline
+from src.summarization import SummarizationPipeline
 
 # ASR Pipeline Class
 class ASRPipeline:
@@ -72,8 +76,29 @@ def main():
     merged_df = pd.merge(processed_corpus_df, asr_results_df, on='id')
 
     # Step 2: Summarization and Evaluation
-    # (Add your summarization and evaluation logic here)
-
+    
+    # Define models to use for summarization
+    xwin_summarizer = XwinSummarizer()
+    vicuna_summarizer = VicunaSummarizer()
+    mpt_summarizer = MPTSummarizer()
+    llama2_summarizer = Llama2Summarizer()
+    
+    # Summarization Pipeline
+    summarization_pipeline = SummarizationPipeline(merged_df)
+    summarization_pipeline.summarize_with_models(xwin_summarizer)
+    summarization_pipeline.summarize_with_models(vicuna_summarizer)
+    summarization_pipeline.summarize_with_models(mpt_summarizer)
+    summarization_pipeline.summarize_with_models(llama2_summarizer)
+    
+    # Evaluation Pipeline
+    evaluation_pipeline = EvaluationPipeline(summarization_pipeline.results_df)
+    evaluation_pipeline.calculate_rouge_n()
+    
+    # Save results
+    summarization_pipeline.save_summaries_to_csv()
+    summarization_pipeline.save_evaluation_results_to_csv()
+    evaluation_pipeline.save_rouge_n_results_to_csv()
+    
     # Save Evaluation Results to CSV
     evaluation_results_df = pd.DataFrame(columns=['Model', 'ROUGE-1', 'ROUGE-2', 'ROUGE-L', 'WER'])
     save_evaluation_results_to_csv(evaluation_results_df)
