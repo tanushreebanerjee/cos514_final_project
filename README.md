@@ -1,7 +1,7 @@
 # Counterfactual Analysis for Spoken Dialog Summarization Tasks
 COS514 Final Project, Fall 2023, Princeton University
 
-Tanushree Banerjee, Kiyosu Maeda
+Authors: Tanushree Banerjee, Kiyosu Maeda
 
 Instructor: Prof. Sanjeev Arora
 
