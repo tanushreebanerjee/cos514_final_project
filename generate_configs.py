@@ -1,4 +1,5 @@
 import yaml
+import os
 from itertools import product
 
 # Define model names, error types, and degrees
@@ -8,7 +9,7 @@ degrees = [0.1, 0.2, 0.3]  # Adjust as needed
 
 # Define other parameters for experiments
 sample_sizes = [100, 200, 300]  # Adjust as needed
-corpora = {'ISCI': 'data/raw/ISCI_corpus', 'AMI': 'data/raw/AMI_corpus'}
+corpora = {'ISCI': os.path.join('data', 'raw', 'iscicorpus'), 'AMI': os.path.join('data', 'raw', 'amicorpus')}
 
 # Generate all combinations of parameters
 experiments = list(product(models, error_types, degrees, sample_sizes, corpora.items()))

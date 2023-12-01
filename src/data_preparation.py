@@ -1,31 +1,36 @@
 import pandas as pd
+from datasets import load_dataset
 
 class DataPreparation:
-    def __init__(self, corpus_path):
-        self.corpus_path = corpus_path
+    def __init__(self, corpus_name):
+        self.corpus_name = corpus_name
 
     def load_transcripts(self):
         # Load transcripts from the chosen corpus
-        # Implement logic to load data from CSV or any other format
-        transcripts_df = pd.read_csv(self.corpus_path)
+        if self.corpus_name == 'AMI':
+            dataset = load_dataset('ami', 'meeting_transcription')
+            transcripts_df = pd.DataFrame({'transcript': dataset['train']['text']})
+            transcripts_df['reference_summary'] = dataset['train']['summary']
+        elif self.corpus_name == 'ISCI':
+            # Add logic to load ISCI corpus if needed
+            pass
+        else:
+            raise ValueError(f"Unsupported corpus: {self.corpus_name}")
+
         return transcripts_df
 
     def create_baseline_transcripts(self, transcripts_df, sample_size=None):
-        # Create baseline transcripts by selecting a sample from the original transcripts
-        # If sample_size is not provided, use the entire dataset
-        if sample_size is None:
-            baseline_transcripts_df = transcripts_df.copy()
-        else:
-            baseline_transcripts_df = transcripts_df.sample(sample_size, random_state=42)
+        # Logic to create baseline transcripts
+        # For example, select a random sample if sample_size is provided
+        if sample_size is not None:
+            transcripts_df = transcripts_df.sample(sample_size, random_state=42)
 
         # Additional preprocessing steps if needed
 
-        return baseline_transcripts_df
+        return transcripts_df
 
 # Example usage:
-corpus_path = 'data/raw/AMI_corpus'
-data_prep = DataPreparation(corpus_path)
+corpus_name = 'AMI'  # Change to 'ISCI' if needed
+data_prep = DataPreparation(corpus_name)
 transcripts_df = data_prep.load_transcripts()
-
-# Create baseline transcripts with a sample size of 100 (adjust as needed)
 baseline_transcripts_df = data_prep.create_baseline_transcripts(transcripts_df, sample_size=100)
