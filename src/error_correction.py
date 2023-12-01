@@ -1,9 +1,6 @@
 import openai
 import backoff
-
 import os
-import openai
-import backoff
 
 class ErrorCorrection:
     def __init__(self, model="text-davinci-003"):
