@@ -30,23 +30,13 @@ class ErrorInjection:
 
         return ' '.join(words)
 
-    def inject_errors(self, transcript, error_degree):
+    def inject_errors(self, transcript, degree):
         # Logic to inject errors based on error types and degree
         for error_type in self.error_types:
             if error_type == 'speaker_identification':
-                transcript = self._inject_speaker_identification_error(transcript, error_degree)
+                transcript = self._inject_speaker_identification_error(transcript, degree)
             elif error_type == 'speech_recognition':
-                transcript = self._inject_speech_recognition_error(transcript, error_degree)
+                transcript = self._inject_speech_recognition_error(transcript, degree)
             # Add more error types if needed
 
         return transcript
-
-# # Example usage:
-# error_types = ['speaker_identification', 'speech_recognition']
-# error_injector = ErrorInjection(error_types)
-
-# # Example transcript
-# example_transcript = "This is a sample transcript for testing error injection."
-
-# # Inject errors with a degree of 0.1 (adjust as needed)
-# transcript_with_errors = error_injector.inject_errors(example_transcript, error_degree=0.1)
