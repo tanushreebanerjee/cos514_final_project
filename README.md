@@ -10,6 +10,11 @@ This project aims to analyze the impact of speaker diarization and speech recogn
 ```css
 project-root/
 ├── data/: Contains raw and processed data.
+    ├── AMI: data from AMI corpus.
+        └── ${meeting_id}
+            ├── abstractive_annotation.txt: Annotated abstractive summary.
+            ├── extractive_annotation.txt: Annotated extractive summary.
+            └── segments_wer_0_der_0.txt: Annotated dialogue.
     ├── raw/: Original data from ICSI or AMI corpus.
     └── processed/: Processed data for the project.
 ├── src/: Python source code for different stages.
