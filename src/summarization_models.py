@@ -1,90 +1,64 @@
-import os
-import openai
 import backoff
-from transformers import pipeline
+import openai
 
-class ChatGPTSummarizer:
-    def __init__(self, model_name="gpt-3.5-turbo", api_key=None):
-        openai.api_key = api_key or os.environ.get("OPENAI_API_KEY")
-        self.model_name = model_name
+from transformers import AutoModelForCausalLM, AutoTokenizer
 
-    @backoff.on_exception(backoff.expo, openai.OpenAIAPIError, max_time=60)
-    def summarize(self, text, api_key=None):
-        openai.api_key = api_key or os.environ.get("OPENAI_API_KEY")
-        prompt = f"Summarize the following text:\n{text}\n\nSummary:"
-        response = openai.Completion.create(
-            engine=self.model_name,
-            prompt=prompt,
-            max_tokens=150,
-            temperature=0.7,
-            stop=None
-        )
-        return response['choices'][0]['text'].strip()
 
-# Placeholder for XwinSummarizer
-class XwinSummarizer:
-    def __init__(self, model_name="TheBloke/Xwin-LM-7B-V0.1-GGUF"):
-        self.summarizer = pipeline("summarization", model=model_name)
+# class ChatGPTSummarizer:
+#     def __init__(self, model_name="gpt-3.5-turbo", api_key=None):
+#         openai.api_key = api_key or os.environ.get("OPENAI_API_KEY")
+#         self.model_name = model_name
 
-    def summarize(self, text):
-        # Use Xwin summarizer to generate a summary
-        summary = self.summarizer(text, max_length=150, min_length=50, length_penalty=2.0, num_beams=4)
-        return summary[0]['summary_text']
+#     @backoff.on_exception(backoff.expo, openai.OpenAIAPIError, max_time=60)
+#     def summarize(self, text, api_key=None):
+#         openai.api_key = api_key or os.environ.get("OPENAI_API_KEY")
+#         prompt = f"Summarize the following text:\n{text}\n\nSummary:"
+#         response = openai.Completion.create(
+#             engine=self.model_name,
+#             prompt=prompt,
+#             max_tokens=150,
+#             temperature=0.7,
+#             stop=None
+#         )
+#         return response['choices'][0]['text'].strip()
 
-# Placeholder for VicunaSummarizer
-class VicunaSummarizer:
-    def __init__(self, model_name="lmsys/vicuna-13b-v1.3"):
-        self.summarizer = pipeline("summarization", model=model_name)
 
-    def summarize(self, text):
-        # Use Vicuna summarizer to generate a summary
-        summary = self.summarizer(text, max_length=150, min_length=50, length_penalty=2.0, num_beams=4)
-        return summary[0]['summary_text']
+class SummarizationModel:
+    
+    def __init__(self, model_name):
+        """Summarization model.
 
-# Placeholder for MPTSummarizer
-class MPTSummarizer:
-    def __init__(self, model_name="mosaicml/mpt-7b"):
-        self.summarizer = pipeline("summarization", model=model_name)
+        Args:
+            model_name (Path or str): Model directory or model name. Choose from the following list.
+                ['Xwin-LM/Xwin-LM-7B-V0.1', 'lmsys/vicuna-13b-v1.3', 'mosaicml/mpt-7b', 'meta-llama/Llama-2-7b-hf']
+        """
+        self.model = AutoModelForCausalLM.from_pretrained(model_name)
+        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
 
-    def summarize(self, text):
-        # Use MPT summarizer to generate a summary
-        summary = self.summarizer(text, max_length=150, min_length=50, length_penalty=2.0, num_beams=4)
-        return summary[0]['summary_text']
+    def __call__(self, dialogue, is_abstractive=True, error_aware=True):
+        """Summarization
 
-# Placeholder for Llama2Summarizer
-class Llama2Summarizer:
-    def __init__(self, model_name="meta-llama/Llama-2-7b-hf"):
-        self.summarizer = pipeline("summarization", model=model_name)
+        Args:
+            dialogue (str): Dialogue.
+            is_abstractive (bool): Whether the model generates abstractive summaries or not.
+                default = True
+            error_aware (bool): Whether the model is aware of upstream task errors or not.
+                default = True
 
-    def summarize(self, text):
-        # Use Llama2 summarizer to generate a summary
-        summary = self.summarizer(text, max_length=150, min_length=50, length_penalty=2.0, num_beams=4)
-        return summary[0]['summary_text']
+        Returns:
+            (str): Summary.
+        """
+        summary_type = 'abstractive'
+        if is_abstractive is not True:
+            summary_type = 'extractive'
+        prompt = f'Please generate an ${summary_type} summary for the following dialogue'
+        if error_aware:
+            prompt += '. Note that this dialogue might contain errors in speaker names and transcripts: '
+        else:
+            prompt += ': '
+        # prompt += dialogue
 
-# Example usage
-example_text = "The project manager introduced the upcoming project to the team members and then the team members participated in an exercise..."
-
-# ChatGPT Summary
-chatgpt_summarizer = ChatGPTSummarizer(model_name="gpt-4")
-chatgpt_summary = chatgpt_summarizer.summarize(example_text)
-print("ChatGPT Summary:", chatgpt_summary)
-
-# Xwin Summary
-xwin_summarizer = XwinSummarizer()
-xwin_summary = xwin_summarizer.summarize(example_text)
-print("Xwin Summary:", xwin_summary)
-
-# Vicuna Summary
-vicuna_summarizer = VicunaSummarizer()
-vicuna_summary = vicuna_summarizer.summarize(example_text)
-print("Vicuna Summary:", vicuna_summary)
-
-# MPT Summary
-mpt_summarizer = MPTSummarizer(model_name="mosaicml/mpt-7b")
-mpt_summary = mpt_summarizer.summarize(example_text)
-print("MPT Summary:", mpt_summary)
-
-# Llama2 Summary
-llama2_summarizer = Llama2Summarizer(model_name="meta-llama/Llama-2-7b-hf")
-llama2_summary = llama2_summarizer.summarize(example_text)
-print("Llama2 Summary:", llama2_summary)
+        inputs = self.tokenizer(prompt, return_tensors='pt')
+        samples = self.model.generate(**inputs, max_new_tokens=4096, temperature=0.7)
+        output = self.tokenizer.decode(samples[0][inputs['input_ids'].shape[1]:], skip_special_tokens=True)
+        return output
