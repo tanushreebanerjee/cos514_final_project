@@ -1,77 +1,47 @@
-import pandas as pd
+import copy
+import random
+
 import numpy as np
-import os
-from pyannote.core import Segment, Annotation
-from pyannote.metrics.diarization import DiarizationErrorRate
+import pandas as pd
+
 
 class CounterfactualGenerator:
-    def __init__(self, corpus_df):
-        self.corpus_df = corpus_df.copy()
 
-    def change_speakers_randomly(self):
-        # Naive implementation: shuffle speaker IDs randomly
-        self.corpus_df['speaker'] = np.random.permutation(self.corpus_df['speaker'])
-    
-    def change_sentences(self):
-        # Naive implementation: shuffle sentences randomly
-        self.corpus_df['text'] = np.random.permutation(self.corpus_df['text'])
+    @staticmethod
+    def get_total_word_num(segments):
+        total_word_num = 0
+        for segment in segments:
+            text = segment['text']
+            text = text.split(' ')
+            total_word_num += len(text)
+        return total_word_num
 
-    def save_counterfactual_to_csv(self, output_csv):
-        self.corpus_df.to_csv(output_csv, index=False)
+    def change_speaker_names(self, segments, error_rate):
+        utterance_num = len(segments)
+        speaker_name_error_num = int(utterance_num * error_rate)
+        counterfactual_segments = copy.deepcopy(segments)
+        random_index_list = random.sample(range(utterance_num), k=speaker_name_error_num)
+        for random_index in random_index_list:
+            counterfactual_segments[random_index]['speaker'] = 'unknown'
+        return counterfactual_segments
 
-def load_corpus_csv(csv_file):
-    return pd.read_csv(csv_file)
 
-def compute_der(reference, hypothesis):
-    # Compute Diarization Error Rate (DER)
-    metric = DiarizationErrorRate()
-    der = metric(reference, hypothesis)
-    return der
-
-# Example usage
-# Load your processed corpus CSV file
-corpus_name = 'ami-corpus'
-processed_corpus_path = os.path.join(os.getcwd(), 'data', 'processed', f'{corpus_name}.csv')
-processed_corpus_df = load_corpus_csv(processed_corpus_path)
-
-# Create CounterfactualGenerator
-counterfactual_generator = CounterfactualGenerator(processed_corpus_df)
-
-# Original transcripts
-reference_annotation = Annotation()
-for index, row in processed_corpus_df.iterrows():
-    reference_annotation[Segment(row['starttime'], row['endtime'])] = row['speaker']
-
-# Generate counterfactuals (change speakers randomly)
-print('Generating counterfactuals (change speakers randomly)...')
-counterfactual_generator.change_speakers_randomly()
-
-# Counterfactual transcripts
-hypothesis_annotation = Annotation()
-for index, row in counterfactual_generator.corpus_df.iterrows():
-    hypothesis_annotation[Segment(row['starttime'], row['endtime'])] = row['speaker']
-
-# Compute DER
-der = compute_der(reference_annotation, hypothesis_annotation)
-print(f'Diarization Error Rate (DER): {der}')
-
-# Save counterfactual transcripts to CSV
-counterfactual_path = os.path.join(os.getcwd(), 'data', 'counterfactual', f'{corpus_name}-counterfactual-changeSpeakers-der-{der:.2f}.csv')
-os.makedirs(os.path.dirname(counterfactual_path), exist_ok=True)
-counterfactual_generator.save_counterfactual_to_csv(counterfactual_path)
-
-# Generate counterfactuals (change sentences randomly)
-print('Generating counterfactuals (change sentences randomly)...')
-counterfactual_generator.change_sentences()
-
-# Counterfactual transcripts
-hypothesis_annotation = Annotation()
-for index, row in counterfactual_generator.corpus_df.iterrows():
-    hypothesis_annotation[Segment(row['start_time'], row['end_time'])] = row['speaker']
-
-# Compute DER
-der = compute_der(reference_annotation, hypothesis_annotation)
-print(f'Diarization Error Rate (DER): {der}')
-
-# Save counterfactual transcripts to CSV
-counterfactual_path = os.path.join(os.getcwd(), 'data', 'counterfactual', f'{corpus_name}-counterfactual-changeSentences-der-{der:.2f}.csv')
+    def change_utterances(self, segments, error_rate):
+        utterance_num = len(segments)
+        total_word_num = self.get_total_word_num(segments)
+        word_error_num = int(total_word_num * error_rate)
+        counterfactual_segments = copy.deepcopy(segments)
+        random_index_list = random.sample(range(total_word_num), k=word_error_num)
+        for random_index in random_index_list:
+            current_word_index = 0
+            current_utterance_id = 0
+            while current_word_index < random_index:
+                text = counterfactual_segments[current_utterance_id]['text']
+                text = text.split(' ')
+                word_num = len(text)
+                current_word_index += word_num
+                if current_word_index >= random_index:
+                    text[-1 + random_index - current_word_index] = '...'
+                counterfactual_segments[current_utterance_id]['text'] = ' '.join(text)
+                current_utterance_id += 1
+        return counterfactual_segments
